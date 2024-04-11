@@ -6,7 +6,7 @@ Easy to use rpm-detector for Arduino/ESP based microcontrollers.<br/>
 
 Get the current speed of your motor (For example BLDC motors).<br/>
 
-To start, change your signal Pin in the code to your own desired pin<br/>
+To start, change your signal Pin in the code to your own desired pin.<br/>
 Now adjust the magnet amount.<br/>
 After that, correct the wheel circumference of your installed wheel on the motor. (Keep gearings in mind, if any)<br/>
 Upload the sketch on your microcontroller, and open the Serial monitor to see the results being printed.<br/>
