@@ -7,10 +7,12 @@
 const int wheelSpeedSensorMagnets = 15;                               //wheelSpeed
 const float wheelCircumferenceInMeter = 0.52;                         //wheelSpeed
 const int wheelSpeedSensorPin = 34;                                   //wheelSpeed
+const int wheelSpeedMaxRotationTriggersPerSecondConstant = 1000;      //wheelSpeed
+const float refreshIntervalInMillis = 1000.0;
 
 //those Variables are stored in RAM! 
-volatile int wheelSpeedMaxRotationTriggersPerSecond = 1000;           //wheelSpeed
-volatile unsigned long wheelSpeedRotationTimestamps[1000] = {0};      //wheelSpeed
+volatile int wheelSpeedMaxRotationTriggersPerSecond = wheelSpeedMaxRotationTriggersPerSecondConstant;           //wheelSpeed
+volatile unsigned long wheelSpeedRotationTimestamps[wheelSpeedMaxRotationTriggersPerSecondConstant] = {0};      //wheelSpeed
 volatile int wheelSpeedRotationTimestampsIndex = 0;                   //wheelSpeed
 volatile byte wheelSpeedSensorTriggerState = LOW;                     //wheelSpeed
 volatile unsigned long wheelSpeedInterruptTime = 0;                   //wheelSpeed
@@ -116,30 +118,31 @@ float calculateWheelSpeedKMH(float wheelSpeedRPM) {
 
 
 
-int count = 0;
+
 
 
 
 ///////////////////////////////////////////////////////VOID LOOP/////////////////////////////////////////////////////////////////////////////////
 
-
+unsigned long lastRefresh = millis();
 
 //Void Loop 
 void loop() {
-  
-  if(count % 500 == 0) {                                                                            //wheelSpeed
+
+  unsigned long currentMillis = millis();
+  if(currentMillis - lastRefresh >= refreshIntervalInMillis) {                                                                            //wheelSpeed
     
-    int wheelSpeedRotationTriggersOfLastSecond = getWheelSpeedRotationTriggersOfLastSecond();       //wheelSpeed
-    float wheelSpeedRPM = calculateWheelSpeedRPM(wheelSpeedRotationTriggersOfLastSecond);           //wheelSpeed
+    const int wheelSpeedRotationTriggersOfLastSecond = getWheelSpeedRotationTriggersOfLastSecond();       //wheelSpeed
+    const float wheelSpeedRPM = calculateWheelSpeedRPM(wheelSpeedRotationTriggersOfLastSecond);           //wheelSpeed
   
-    float wheelSpeedKMH = calculateWheelSpeedKMH(wheelSpeedRPM);                                    //wheelSpeed
+    const float wheelSpeedKMH = calculateWheelSpeedKMH(wheelSpeedRPM);                                    //wheelSpeed
   
-    Serial.print("Current RPM:" + String(wheelSpeedRPM));                                           //wheelSpeed
+    Serial.print(String("Current RPM:") + String(wheelSpeedRPM, 0));                                //wheelSpeed
     Serial.print(",");                                                                              //wheelSpeed
-    Serial.print("Current KMH:" + String(wheelSpeedKMH));                                           //wheelSpeed
+    Serial.print(String("Current KMH:") + String(wheelSpeedKMH, 2));                                //wheelSpeed
     Serial.println("");                                                                             //wheelSpeed
-    
+
+    lastRefresh = millis();
   }
-  count++;                                                                                          //wheelSpeed
 
 }
